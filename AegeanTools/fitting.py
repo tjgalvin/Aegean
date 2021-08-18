@@ -1347,7 +1347,7 @@ def do_lmfit(data, params, B=None, errs=None, dojac=True):
     # Valid_maask is a boolean array __into__ the image data array
     # mask is __really__ the x and y coordinates of the image data array
     valid_mask = np.isfinite(data)
-    mask = (m + 0.5 for m in np.where(valid_mask))
+    mask = tuple(m + 0.5 for m in np.where(valid_mask))
 
     def residual(params, **kwargs):
         """
