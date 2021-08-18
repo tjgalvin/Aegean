@@ -1343,10 +1343,11 @@ def do_lmfit(data, params, B=None, errs=None, dojac=True):
     # in case we want to use them elsewhere
     params = copy.deepcopy(params)
     data = np.array(data)
-    # TODO: Increase the mask by 0.5 here
+
+    # Valid_maask is a boolean array __into__ the image data array
+    # mask is __really__ the x and y coordinates of the image data array
     valid_mask = np.isfinite(data)
-    mask = np.where(valid_mask)
-    mask = [m + 0.5 for m in mask]
+    mask = (m + 0.5 for m in np.where(valid_mask))
 
     def residual(params, **kwargs):
         """
@@ -1417,7 +1418,7 @@ def covar_errors(params, data, errs, B, C=None):
         Modified model.
     """
 
-    mask = np.where(np.isfinite(data))
+    mask = (m + 0.5 for m in np.where(np.isfinite(data)))
 
     # calculate the proper parameter errors and copy them across.
     if C is not None:
