@@ -1418,7 +1418,7 @@ def covar_errors(params, data, errs, B, C=None):
         Modified model.
     """
 
-    mask = (m + 0.5 for m in np.where(np.isfinite(data)))
+    mask = tuple(m + 0.5 for m in np.where(np.isfinite(data)))
 
     # calculate the proper parameter errors and copy them across.
     if C is not None:

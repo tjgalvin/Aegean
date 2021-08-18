@@ -99,7 +99,7 @@ def mask_to_bin_coord(i_data):
     
     """
     valid_mask = np.isfinite(i_data)
-    pix_pos = [m + 0.5 for m in np.where(valid_mask)]
+    pix_pos = tuple(m + 0.5 for m in np.where(valid_mask))
 
     return valid_mask, pix_pos
 
