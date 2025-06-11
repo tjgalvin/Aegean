@@ -2,12 +2,13 @@
 """
 Test regions.py
 """
+
 import os
 
 import numpy as np
 from AegeanTools.regions import Region
 
-__author__ = 'Paul Hancock'
+__author__ = "Paul Hancock"
 
 
 def test_radec2sky():
@@ -21,7 +22,7 @@ def test_radec2sky():
     sky = Region.radec2sky(ra, dec)
     answer = np.array([(ra[0], dec[0]), (ra[1], dec[1])])
     if not (np.all(sky == answer)):
-        raise AssertionError('radec2sky broken on list input')
+        raise AssertionError("radec2sky broken on list input")
 
 
 def test_sky2ang_symmetric():
@@ -31,7 +32,7 @@ def test_sky2ang_symmetric():
     tp = np.array([[tp[0][1], tp[0][0]]])
     sky2 = Region.sky2ang(tp)
     sky2 = np.array([[sky2[0][1], sky2[0][0]]])
-    if not (np.all(abs(sky-sky2) < 1e-9)):
+    if not (np.all(abs(sky - sky2) < 1e-9)):
         raise AssertionError("sky2ang failed to be symmetric")
 
 
@@ -39,9 +40,9 @@ def test_sky2ang_corners():
     """Test that function Region.sky2ang works at 0/0 and the south pole"""
     corners = np.radians([[0, 0], [360, -90]])
     theta_phi = Region.sky2ang(corners)
-    answers = np.array([[np.pi/2, 0], [np.pi, 2*np.pi]])
+    answers = np.array([[np.pi / 2, 0], [np.pi, 2 * np.pi]])
     if not (np.all(theta_phi - answers < 1e-9)):
-        raise AssertionError('sky2ang corner cases failed')
+        raise AssertionError("sky2ang corner cases failed")
 
 
 def test_sky2vec_corners():
@@ -50,7 +51,7 @@ def test_sky2vec_corners():
     answers = np.array([[1, 0, 0], [0, 0, 1], [0, 0, -1]])
     vec = Region.sky2vec(sky)
     if not (np.all(vec - answers < 1e-9)):
-        raise AssertionError('sky2vec corner cases failed')
+        raise AssertionError("sky2vec corner cases failed")
 
 
 def test_vec2sky_corners():
@@ -59,7 +60,7 @@ def test_vec2sky_corners():
     skycoords = Region.vec2sky(vectors, degrees=True)
     answers = np.array([[0, 0], [0, 90], [0, -90]])
     if not (np.all(skycoords == answers)):
-        raise AssertionError('vec2sky fails on corners')
+        raise AssertionError("vec2sky fails on corners")
 
 
 def test_sky2vec2sky():
@@ -72,7 +73,7 @@ def test_sky2vec2sky():
         raise AssertionError("sky2vec2sky failed")
     vec2 = Region.sky2vec(sky2)
     if not (np.all(np.array(vec) - np.array(vec2) == 0)):
-        raise AssertionError('vec2sky2vec failed')
+        raise AssertionError("vec2sky2vec failed")
 
 
 def test_add_circles_list_scalar():
@@ -90,12 +91,13 @@ def test_add_circles_list_scalar():
     region2.add_circles(ra, dec, radius)
     region2._demote_all()
     test = True
-    for i in range(1, region1.maxdepth+1):
+    for i in range(1, region1.maxdepth + 1):
         if len(region1.pixeldict[i].difference(region2.pixeldict[i])) > 0:
             test = False
     if not (test):
         raise AssertionError(
-            'add_circles gives different results for lists and scalars')
+            "add_circles gives different results for lists and scalars"
+        )
 
 
 def test_renorm_demote_symmetric():
@@ -111,11 +113,11 @@ def test_renorm_demote_symmetric():
     region._demote_all()
     end_dict = region.pixeldict.copy()
     test = True
-    for i in range(1, region.maxdepth+1):
+    for i in range(1, region.maxdepth + 1):
         if len(end_dict[i].difference(start_dict[i])) > 0:
             test = False
     if not (test):
-        raise AssertionError('renorm and demote are not symmetric')
+        raise AssertionError("renorm and demote are not symmetric")
 
 
 def test_sky_within():
@@ -129,7 +131,7 @@ def test_sky_within():
         raise AssertionError("Failed on position at center of region")
     if not (np.all(region.sky_within(ra, dec))):
         raise AssertionError("Failed on list of positions")
-    if np.any(region.sky_within(ra[0]+5*radius[0], dec[0])):
+    if np.any(region.sky_within(ra[0] + 5 * radius[0], dec[0])):
         raise AssertionError("Failed on position outside of region")
     try:
         region.sky_within(np.nan, dec[0])
@@ -138,7 +140,7 @@ def test_sky_within():
 
 
 def test_pickle():
-    """ Test that the Region class can be pickled and loaded without loss """
+    """Test that the Region class can be pickled and loaded without loss"""
     ra = 66.38908
     dec = -26.72466
     radius = 22
@@ -148,11 +150,11 @@ def test_pickle():
         import cPickle as pickle
     except ImportError:
         import pickle
-    pickle.dump(region, open('out_temp.mim', 'wb'))
-    region2 = pickle.load(open('out_temp.mim', 'rb'))
+    pickle.dump(region, open("out_temp.mim", "wb"))
+    region2 = pickle.load(open("out_temp.mim", "rb"))
     if not (region.pixeldict == region2.pixeldict):
-        raise AssertionError('pickle/unpickle does not give same region')
-    os.remove('out_temp.mim')
+        raise AssertionError("pickle/unpickle does not give same region")
+    os.remove("out_temp.mim")
 
 
 def test_reg():
@@ -165,35 +167,35 @@ def test_reg():
     radius = np.radians([3])
     region = Region(maxdepth=5)
     region.add_circles(ra, dec, radius)
-    region.write_reg('test.reg')
-    if not (os.path.exists('test.reg')):
+    region.write_reg("test.reg")
+    if not (os.path.exists("test.reg")):
         raise AssertionError()
-    os.remove('test.reg')
+    os.remove("test.reg")
 
 
 def test_poly():
     """
     Test that polygon regions can be added and written to .reg files
     """
-    ra = [5., 5., 7., 7.]
-    dec = [-2., -2.5, -2.5, -2.]
+    ra = [5.0, 5.0, 7.0, 7.0]
+    dec = [-2.0, -2.5, -2.5, -2.0]
     region = Region(maxdepth=6)
     positions = list(zip(np.radians(ra), np.radians(dec)))
     region.add_poly(positions)
-    region.write_reg('test.reg')
-    if not (os.path.exists('test.reg')):
+    region.write_reg("test.reg")
+    if not (os.path.exists("test.reg")):
         raise AssertionError()
-    os.remove('test.reg')
+    os.remove("test.reg")
 
 
 def test_write_fits():
-    """ Test that MOC files can be written in fits format """
+    """Test that MOC files can be written in fits format"""
     a = Region()
     a.add_circles(12, 0, 0.1)
-    a.write_fits('test_MOC.fits')
-    if not (os.path.exists('test_MOC.fits')):
+    a.write_fits("test_MOC.fits")
+    if not (os.path.exists("test_MOC.fits")):
         raise AssertionError()
-    os.remove('test_MOC.fits')
+    os.remove("test_MOC.fits")
 
 
 def test_without():
@@ -227,7 +229,7 @@ def test_intersect():
     c = Region(maxdepth=8)
     c.add_circles(0, np.radians(90), np.radians(10))
     a.intersect(c)
-    if not (a.get_area() == 0.):
+    if not (a.get_area() == 0.0):
         raise AssertionError("test_intersect FAILED")
 
 
@@ -261,6 +263,6 @@ def test_symmetric_difference():
 if __name__ == "__main__":
     # introspect and run all the functions starting with 'test'
     for f in dir():
-        if f.startswith('test'):
+        if f.startswith("test"):
             print(f)
             globals()[f]()

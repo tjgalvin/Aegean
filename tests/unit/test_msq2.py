@@ -2,16 +2,17 @@
 """
 Test msq2.py
 """
+
 import numpy as np
 from AegeanTools.msq2 import MarchingSquares
 
-__author__ = 'Paul Hancock'
+__author__ = "Paul Hancock"
 
 
 def test_defaults():
     """Test that we can do a basic task"""
     # make a + shape from ones on a background of nan
-    data = np.zeros((5, 5))*np.nan
+    data = np.zeros((5, 5)) * np.nan
     data[1:4, 2] = 1
     data[2, 1:4] = 1
     ms = MarchingSquares(data)
@@ -45,6 +46,6 @@ def test_multi_islands():
 if __name__ == "__main__":
     # introspect and run all the functions starting with 'test'
     for f in dir():
-        if f.startswith('test'):
+        if f.startswith("test"):
             print(f)
             globals()[f]()
